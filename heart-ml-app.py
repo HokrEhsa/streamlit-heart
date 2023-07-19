@@ -13,21 +13,22 @@ from sklearn.ensemble import RandomForestClassifier
 
 import streamlit as st
 
-# Add Streamlit components
+# Add title
 st.write('''
 # Heart Disease Prediction App
 This application will predict the possibility of having indicators of **Coronary Heart Disease**.
 ''')
 
-# set up the sidebar
-st.sidebar.image('heartbeatwave.png', use_column_width=True)
+# Sidebar components
+st.sidebar.image('heartbeat_transbg.png', use_column_width=True)
 
 st.sidebar.header("User Input Parameters")
 
-# import datasets
+# Import datasets
 heart_bfmodel = pd.read_csv("heart.csv")
 heart = pd.read_csv("heart_le.csv")
 
+# Inputting parameters
 def user_input_features():
     age = st.sidebar.slider("Age", 18, 100, 30)
     sex = st.sidebar.radio("Sex", ['Male', 'Female'])
@@ -60,6 +61,7 @@ def user_input_features():
 
 df = user_input_features()
 
+# Scaling dataframe of inputted parameters
 df_scale = df.copy(deep=True)
 
 def scale_dataframe():
@@ -112,6 +114,7 @@ def scale_dataframe():
             
 scale_dataframe()
 
+# Making the model
 X = heart.drop('HeartDisease', axis=1)
 y = heart['HeartDisease']
 
@@ -126,39 +129,15 @@ prediction = model.predict(df_scale)
 prediction_proba = model.predict_proba(df_scale)
 
 
-
+# Tabs of different information
 tab1, tab2, tab3 = st.tabs(["Dictionary", "Parameters", "Prediction"])
 
+# Tab of dataset and dictionary
 with tab1:
     st.subheader("Dataset used for Modelling")
     st.write(heart_bfmodel)
     
     st.subheader("Data Dictionary")
-#     st.write('''
-# **Age:** The age of the patient in years.
-
-# **Sex:** Biological sex of the patient.
-
-# **ChestPainType:** Type of chest pain experienced.
-
-# **RestingBP:** Resting blood pressure in mm Hg.
-
-# **Cholesterol:** Serum/Total cholesterol level in mm/dl.
-
-# **FastingBS:** Fasting blood sugar of patient.
-
-# **RestingECG:** Resting electrocardiogram results.
-
-# **MaxHR:** Maximum heart rate achieved.
-
-# **ExerciseAngina:** Presence of exercise-induced angina.
-
-# **Oldpeak:** ST numeric value measured in depression.
-
-# **ST_Slope:** The slope of the peak exercise ST segment.
-
-# **HeartDisease:** Output class of whether if patient has heart disease.
-# ''')
 
     st.write('''
     **Age:** The age of the patient in years.
@@ -222,7 +201,7 @@ with tab1:
     - 0: Normal
         ''')
 
-    
+# Tab with original inputs and encoded + scaled inputs
 with tab2:
     st.subheader('User Input Parameters')
     st.write('The DataFrame below shows the parameters inputted.')
@@ -231,7 +210,8 @@ with tab2:
     st.subheader('Parameters after Encoding and Scaling')
     st.write('The DataFrame below shows the parameters inputted after **feature scaling** and **label encoding**.')
     st.write(df_scale)
-    
+
+# Tab with predicted value and probability of prediction
 with tab3:
     st.subheader('Class Labels and their Corresponding Index Number')
     st.write(heart['HeartDisease'].unique())
@@ -257,41 +237,36 @@ with tab3:
     st.subheader('Prediction Probability')
     st.write(prediction_proba)
     
-#     st.write('''
-#         1. If the probability of Class 1 is significantly higher than **0.5**, the parameters indicate that the person has a **high likelihood** of having heart disease.
-#         ''')
-#     st.write('''
-#         2. If the probability of Class 1 is significantly lower than **0.5**, the parameters indicate that the person has a **low likelihood** of having heart disease.
-#         ''')
-#     st.write('''
-#         3. If the probability of Class 1 is around **0.5** (or has a probability similar in value to Class 0), the parameters are **unable to indicate** if the person has a high or low likelihood of having heart disease.
-#         ''')
+    prediction_proba_percent = prediction_proba * 100
+    prediction_proba_percent = np.round(prediction_proba_percent, 1)
     
-    if (prediction_proba >= 0).any() and (prediction_proba <= 0.2).any():
-        st.write('''
-        The probability indicates a **very high likelihood** of having Coronary Heart Disease or signs of it.
-        ''')
-    elif (prediction_proba > 0.2).any() and (prediction_proba <= 0.4).any():
-        st.write('''
-        The probability indicates a **high likelihood** of having Coronary Heart Disease or signs of it.
-        ''')
-    elif (prediction_proba > 0.4).any() and (prediction_proba <= 0.6).any():
-        st.write('''
-        The probability is **unable to tell** if the person has Coronary Heart Disease or signs of it.
-        ''')
-    elif (prediction_proba > 0.6).any() and (prediction_proba <= 0.8).any():
-        st.write('''
-        The probability indicates a **low likelihood** of having Coronary Heart Disease or signs of it.
-        ''')
-    else:
+    st.write(
+            f'''Probability of having heart disease: **{prediction_proba_percent[0, 1]}%**'''
+        )
+    
+    if (prediction_proba[0, 1] >= 0).any() and (prediction_proba[0, 1] <= 0.2).any():
         st.write('''
         The probability indicates a **very low likelihood** of having Coronary Heart Disease or signs of it.
         ''')
-
-
-    
+    elif (prediction_proba[0, 1] > 0.2).any() and (prediction_proba[0, 1] <= 0.4).any():
+        st.write('''
+        The probability indicates a **low likelihood** of having Coronary Heart Disease or signs of it.
+        ''')
+    elif (prediction_proba[0, 1] > 0.4).any() and (prediction_proba[0, 1] <= 0.6).any():
+        st.write('''
+        The probability **cannot tell** if the person has Coronary Heart Disease or signs of it.
+        ''')
+    elif (prediction_proba[0, 1] > 0.6).any() and (prediction_proba[0, 1] <= 0.8).any():
+        st.write('''
+        The probability indicates a **high likelihood** of having Coronary Heart Disease or signs of it.
+        ''')
+    else:
+        st.write('''
+        The probability indicates a **very high likelihood** of having Coronary Heart Disease or signs of it.
+        ''')
+        
 # In[ ]:
-
+    
 
 
 

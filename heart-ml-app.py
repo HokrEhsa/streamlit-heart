@@ -16,7 +16,7 @@ This application will predict the possibility of having indicators of **Coronary
 ''')
 
 # Sidebar components
-st.sidebar.image('heartbeat_transbg.png', use_column_width=True)
+st.sidebar.image('heartbeat_transbg_logo.png', use_column_width=True)
 
 st.sidebar.header("User Input Parameters")
 

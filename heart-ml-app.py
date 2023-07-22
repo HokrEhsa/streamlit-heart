@@ -3,15 +3,11 @@
 
 # In[1]:
 
-# import modules
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-
-import streamlit as st
+# Import modules
+import pickle          # To load prediction model
+import pandas as pd    # To load dataset
+import streamlit as st # To create streamlit formatting
+import numpy as np     # To round the percentage probability for better viewing
 
 # Add title
 st.write('''
@@ -24,9 +20,13 @@ st.sidebar.image('heartbeat_transbg.png', use_column_width=True)
 
 st.sidebar.header("User Input Parameters")
 
-# Import datasets
+# Import datasets for showcase
 heart_bfmodel = pd.read_csv("heart.csv")
 heart = pd.read_csv("heart_le.csv")
+
+# Import model used for predicting heart disease
+with open('RFC_model.pkl', 'rb') as file:
+    RFC_model = pickle.load(file)
 
 # Inputting parameters
 def user_input_features():
@@ -42,6 +42,7 @@ def user_input_features():
     oldpk = st.sidebar.slider("Old Peak", -3.0, 6.5, 0.0)
     slope = st.sidebar.radio("ST Slope", ['Downsloping', 'Flat', 'Upsloping'])
     
+    # Store the inputs in a Dataframe
     data = {'Age': age,
             'Sex': sex,
             'ChestPainType': cptype,
@@ -59,14 +60,20 @@ def user_input_features():
     
     return features
 
+# Call function
 df = user_input_features()
 
-# Scaling dataframe of inputted parameters
+# Scaling and encoding dataframe of inputted parameters
 df_scale = df.copy(deep=True)
 
 def scale_dataframe():
+    
+    # Each of the features are dealt with differently
+    
+    # Numerical features except Oldpeak are standardised using the mean and standard deviation values from the prepared dataset
     df_scale['Age'] = (df_scale['Age'] - 53.509269) / 9.437636
     
+    # Categorical features are encoded with labels for each value following the prepared dataset
     if df_scale.loc[0, 'Sex'] == 'Male':
             df_scale.loc[0, 'Sex'] = 1
     elif df_scale.loc[0, 'Sex'] == 'Female':
@@ -82,6 +89,7 @@ def scale_dataframe():
             df_scale.loc[0, 'ChestPainType'] = 3
 
     df_scale['RestingBP'] = (df_scale['RestingBP'] - 132.540894) / 17.999749
+    
     df_scale['Cholesterol'] = (df_scale['Cholesterol'] - 244.637939) / 53.385298
 
     if df_scale.loc[0, 'FastingBS'] == '> 120 mg/dL':
@@ -103,6 +111,7 @@ def scale_dataframe():
     elif df_scale.loc[0, 'ExerciseAngina'] == 'No':
             df_scale.loc[0, 'ExerciseAngina'] = 0
             
+    # Oldpeak is normalised by min-maxing values following the prepared dataset
     df_scale['Oldpeak'] = (df_scale['Oldpeak'] - (-2.6)) / (6.2 - (-2.6))
     
     if df_scale.loc[0, 'ST_Slope'] == 'Downsloping':
@@ -110,31 +119,23 @@ def scale_dataframe():
     elif df_scale.loc[0, 'ST_Slope'] == 'Flat':
             df_scale.loc[0, 'ST_Slope'] = 1   
     elif df_scale.loc[0, 'ST_Slope'] == 'Upsloping':
-            df_scale.loc[0, 'ST_Slope'] = 2                
-            
+            df_scale.loc[0, 'ST_Slope'] = 2        
+
+# Call function
 scale_dataframe()
 
-# Making the model
-X = heart.drop('HeartDisease', axis=1)
-y = heart['HeartDisease']
-
-# Split the dataset into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, random_state=2201984)
-
-model = RandomForestClassifier(max_depth=5, criterion='gini', min_samples_split=2, n_estimators=300, max_features='sqrt')
-model.fit(X_train, y_train)
-
 # Make predictions on the input array
-prediction = model.predict(df_scale)
-prediction_proba = model.predict_proba(df_scale)
-
+prediction = RFC_model.predict(df_scale)
+prediction_proba = RFC_model.predict_proba(df_scale)
 
 # Tabs of different information
 tab1, tab2, tab3 = st.tabs(["Dictionary", "Parameters", "Prediction"])
 
 # Tab of dataset and dictionary
 with tab1:
-    st.subheader("Dataset used for Modelling")
+    
+    # Original dataset before preparation
+    st.subheader("Original Dataset from Kaggle")
     st.write(heart_bfmodel)
     
     st.subheader("Data Dictionary")
@@ -144,19 +145,19 @@ with tab1:
 
     **Sex:** Biological sex of the patient.
 
-    - M: Male
+    - **M:** Male
 
-    - F: Female
+    - **F:** Female
 
     **ChestPainType:** Type of chest pain experienced.
 
-    - TA: Typical Angina
+    - **TA:** Typical Angina
 
-    - ATA: Atypical Angina
+    - **ATA:** Atypical Angina
 
-    - NAP: Non-Anginal Pain
+    - **NAP:** Non-Anginal Pain
 
-    - ASY: Asymptomatic
+    - **ASY:** Asymptomatic
 
     **RestingBP:** Resting blood pressure in mm Hg.
 
@@ -164,64 +165,138 @@ with tab1:
 
     **FastingBS:** Fasting blood sugar of patient.
 
-    - 1: If FastingBS > 120 mg/dL
+    - **1:** If FastingBS > 120 mg/dL
 
-    - 0: Otherwise
+    - **0:** Otherwise
 
     **RestingECG:** Resting electrocardiogram results.
 
-    - Normal: Normal
+    - **Normal:** Normal
 
-    - ST: Having ST-T Wave Abnormality (T wave inversions and/or ST elevation or depression of > 0.05 mV)
+    - **ST:** Having ST-T Wave Abnormality (T wave inversions and/or ST elevation or depression of > 0.05 mV)
 
-    - LVH: Showing probable or definite Left Ventricular Hypertrophy by Estes' criteria
+    - **LVH:** Showing probable or definite Left Ventricular Hypertrophy by Estes' criteria
 
     **MaxHR:** Maximum heart rate achieved.
 
     **ExerciseAngina:** Presence of exercise-induced angina.
 
-    - Y: Yes
+    - **Y:** Yes
 
-    - N: No
+    - **N:** No
 
     **Oldpeak:** ST numeric value measured in depression.
 
     **ST_Slope:** The slope of the peak exercise ST segment.
 
-    - Up: Upsloping
+    - **Up:** Upsloping
 
-    - Flat: Flat
+    - **Flat:** Flat
 
-    - Down: Downsloping
+    - **Down:** Downsloping
 
     **HeartDisease:** Output class of whether if patient has heart disease.
 
-    - 1: Heart Disease
+    - **1:** Heart Disease
 
-    - 0: Normal
+    - **0:** Normal
+        ''')
+    
+    # Dataset after data preparation and being used for modelling
+    st.subheader("Dataset for Modelling after Data Preparation")
+    st.write(heart)
+    
+    st.subheader("Data Dictionary")
+
+    st.write('''
+    **Age:** The age of the patient in years after stardardisation.
+
+    **Sex:** Biological sex of the patient.
+
+    - **0:** Female
+
+    - **1:** Male
+
+    **ChestPainType:** Type of chest pain experienced.
+    
+    - **0:** Asymptomatic
+
+    - **1:** Atypical Angina
+
+    - **2:** Non-Anginal Pain
+
+    - **3:** Typical Angina
+
+    **RestingBP:** Resting blood pressure in mm Hg after stardardisation.
+
+    **Cholesterol:** Serum/Total cholesterol level in mm/dl after stardardisation.
+
+    **FastingBS:** Fasting blood sugar of patient.
+
+    - **0:** Otherwise
+
+    - **1:** If FastingBS > 120 mg/dL
+
+    **RestingECG:** Resting electrocardiogram results.
+
+    - **0:** Showing probable or definite Left Ventricular Hypertrophy by Estes' criteria
+    
+    - **1:** Normal
+
+    - **2:** Having ST-T Wave Abnormality (T wave inversions and/or ST elevation or depression of > 0.05 mV)    
+
+    **MaxHR:** Maximum heart rate achieved after stardardisation.
+
+    **ExerciseAngina:** Presence of exercise-induced angina.
+
+    - **0:** No
+
+    - **1:** Yes
+
+    **Oldpeak:** ST numeric value measured in depression after normalisation.
+
+    **ST_Slope:** The slope of the peak exercise ST segment.
+
+    - **0:** Downsloping
+
+    - **1:** Flat
+
+    - **2:** Upsloping
+
+    **HeartDisease:** Output class of whether if patient has heart disease.
+
+    - **0:** Normal
+
+    - **1:** Heart Disease
         ''')
 
 # Tab with original inputs and encoded + scaled inputs
 with tab2:
+    
+    # The inputs from the sidebar inside a DataFrame
     st.subheader('User Input Parameters')
     st.write('The DataFrame below shows the parameters inputted.')
     st.write(df)
     
+    # The inputs DataFrame encoded and scaled to match the prediction model and dataset
     st.subheader('Parameters after Encoding and Scaling')
     st.write('The DataFrame below shows the parameters inputted after **feature scaling** and **label encoding**.')
     st.write(df_scale)
 
 # Tab with predicted value and probability of prediction
 with tab3:
+    
+    # Explaination of the different values predicted
     st.subheader('Class Labels and their Corresponding Index Number')
     st.write(heart['HeartDisease'].unique())
-
+    
     st.write('''
     **0:** This value means that the person does not have Coronary Heart Disease.
     
     **1:** This value means that the person does have Coronary Heart Disease or has signs of it.
     ''')
 
+    # Predicted value of the inputs provided
     st.subheader('Predicted Value')
     st.write('Prediction:', heart['HeartDisease'].unique()[prediction])
 
@@ -233,7 +308,8 @@ with tab3:
         st.write('''
         The information predicts that the person is **likely** to have or has Coronary Heart Disease.
         ''')
-
+    
+    # Prediction probability of the inputs and its likelihood for the person to have heart disease
     st.subheader('Prediction Probability')
     st.write(prediction_proba)
     
@@ -244,6 +320,7 @@ with tab3:
             f'''Probability of having heart disease: **{prediction_proba_percent[0, 1]}%**'''
         )
     
+    # Prints a statement of the likelihood (low, high or unable to tell) of if the person would get/already has heart disease
     if (prediction_proba[0, 1] >= 0).any() and (prediction_proba[0, 1] <= 0.2).any():
         st.write('''
         The probability indicates a **very low likelihood** of having Coronary Heart Disease or signs of it.

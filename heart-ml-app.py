@@ -8,7 +8,18 @@ import pickle          # To load prediction model
 import pandas as pd    # To load dataset
 import streamlit as st # To create streamlit formatting
 import numpy as np     # To round the percentage probability for better viewing
-import sklearn         # Prevention of error (I don't know why without this it gives a ModuleNotFound error since I never called it)
+
+import subprocess
+
+# Define the package name to install
+package_name = "scikit-learn"
+
+# Use subprocess to run the pip install command
+try:
+    subprocess.check_call(["pip", "install", package_name])
+    print(f"Successfully installed {package_name}.")
+except subprocess.CalledProcessError:
+    print(f"Failed to install {package_name}. Please check your internet connection and try again.")
 
 # Add title
 st.write('''

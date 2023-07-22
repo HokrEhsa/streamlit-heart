@@ -5,18 +5,14 @@
 
 # Import modules
 import pickle          # To load prediction model
+
 import pandas as pd    # To load dataset
-import streamlit as st # To create streamlit formatting
 import numpy as np     # To round the percentage probability for better viewing
 
-import subprocess
+from sklearn.model_selection import train_test_split   # To split the X and y data into training and testing sets
+from sklearn.ensemble import RandomForestClassifier    # To use Random Forest Classifier as the prediction model
 
-# Use subprocess to run the pip install command
-try:
-    subprocess.check_call(["pip", "install", "scikit-learn"])
-    print("Successfully installed scikit-learn.")
-except Exception as e:
-    print("Error occurred:", e)
+import streamlit as st # To create streamlit formatting
 
 # Add title
 st.write('''
@@ -25,17 +21,13 @@ This application will predict the possibility of having indicators of **Coronary
 ''')
 
 # Sidebar components
-st.sidebar.image('heartbeat_transbg.png', use_column_width=True)
+st.sidebar.image('heartbeat_transbg_logo.png', use_column_width=True)
 
 st.sidebar.header("User Input Parameters")
 
 # Import datasets for showcase
 heart_bfmodel = pd.read_csv("heart.csv")
 heart = pd.read_csv("heart_le.csv")
-
-# Import model used for predicting heart disease
-with open('RFC_model.pkl', 'rb') as file:
-    RFC_model = pickle.load(file)
 
 # Inputting parameters
 def user_input_features():
@@ -128,14 +120,24 @@ def scale_dataframe():
     elif df_scale.loc[0, 'ST_Slope'] == 'Flat':
             df_scale.loc[0, 'ST_Slope'] = 1   
     elif df_scale.loc[0, 'ST_Slope'] == 'Upsloping':
-            df_scale.loc[0, 'ST_Slope'] = 2        
+            df_scale.loc[0, 'ST_Slope'] = 2                
 
 # Call function
 scale_dataframe()
 
+# Split the dataset into features and target variable
+X = heart.drop('HeartDisease', axis=1)
+y = heart['HeartDisease']
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, random_state=2201984)
+
+# Create model with best hyperparameters
+model = DecisionTreeClassifier(criterion = 'gini', max_depth = 3, min_samples_split = 2, max_features = 'sqrt', min_samples_leaf = 3, splitter = 'best', random_state = 2201984)
+
 # Make predictions on the input array
-prediction = RFC_model.predict(df_scale)
-prediction_proba = RFC_model.predict_proba(df_scale)
+prediction = model.predict(df_scale)
+prediction_proba = model.predict_proba(df_scale)
 
 # Tabs of different information
 tab1, tab2, tab3 = st.tabs(["Dictionary", "Parameters", "Prediction"])

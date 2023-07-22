@@ -133,7 +133,8 @@ y = heart['HeartDisease']
 X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, random_state=2201984)
 
 # Create model with best hyperparameters
-model = DecisionTreeClassifier(criterion = 'gini', max_depth = 3, min_samples_split = 2, max_features = 'sqrt', min_samples_leaf = 3, splitter = 'best', random_state = 2201984)
+model = RandomForestClassifier(max_depth = 5, criterion = 'gini', min_samples_split = 2, n_estimators = 300, max_features = 'sqrt', 
+                               random_state = 2201984)
 
 # Make predictions on the input array
 prediction = model.predict(df_scale)

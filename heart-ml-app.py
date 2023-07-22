@@ -8,6 +8,7 @@ import pickle          # To load prediction model
 import pandas as pd    # To load dataset
 import streamlit as st # To create streamlit formatting
 import numpy as np     # To round the percentage probability for better viewing
+import sklearn         # Prevention of error (I don't know why without this it gives a ModuleNotFound error since I never called it)
 
 # Add title
 st.write('''

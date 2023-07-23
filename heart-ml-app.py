@@ -136,6 +136,9 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, random
 model = RandomForestClassifier(max_depth = 5, criterion = 'gini', min_samples_split = 2, n_estimators = 300, max_features = 'sqrt', 
                                random_state = 2201984)
 
+# Fit the model
+model.fit(X_train, y_train)
+
 # Make predictions on the input array
 prediction = model.predict(df_scale)
 prediction_proba = model.predict_proba(df_scale)

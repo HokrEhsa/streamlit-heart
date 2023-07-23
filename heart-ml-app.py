@@ -213,13 +213,13 @@ with tab1:
     st.write('''
     **Age:** The age of the patient in years after stardardisation.
 
-    **Sex:** Biological sex of the patient.
+    **Sex:** Biological sex of the patient after label encoding.
 
     - **0:** Female
 
     - **1:** Male
 
-    **ChestPainType:** Type of chest pain experienced.
+    **ChestPainType:** Type of chest pain experienced after label encoding.
     
     - **0:** Asymptomatic
 
@@ -233,13 +233,13 @@ with tab1:
 
     **Cholesterol:** Serum/Total cholesterol level in mm/dl after stardardisation.
 
-    **FastingBS:** Fasting blood sugar of patient.
+    **FastingBS:** Fasting blood sugar of patient after label encoding.
 
     - **0:** Otherwise
 
     - **1:** If FastingBS > 120 mg/dL
 
-    **RestingECG:** Resting electrocardiogram results.
+    **RestingECG:** Resting electrocardiogram results after label encoding.
 
     - **0:** Showing probable or definite Left Ventricular Hypertrophy by Estes' criteria
     
@@ -249,7 +249,7 @@ with tab1:
 
     **MaxHR:** Maximum heart rate achieved after stardardisation.
 
-    **ExerciseAngina:** Presence of exercise-induced angina.
+    **ExerciseAngina:** Presence of exercise-induced angina after label encoding.
 
     - **0:** No
 
@@ -257,7 +257,7 @@ with tab1:
 
     **Oldpeak:** ST numeric value measured in depression after normalisation.
 
-    **ST_Slope:** The slope of the peak exercise ST segment.
+    **ST_Slope:** The slope of the peak exercise ST segment after label encoding.
 
     - **0:** Downsloping
 
@@ -265,7 +265,7 @@ with tab1:
 
     - **2:** Upsloping
 
-    **HeartDisease:** Output class of whether if patient has heart disease.
+    **HeartDisease:** Output class of whether if patient has heart disease after label encoding.
 
     - **0:** Normal
 

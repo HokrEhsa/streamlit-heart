@@ -9,9 +9,6 @@ import pickle          # To load prediction model
 import pandas as pd    # To load dataset
 import numpy as np     # To round the percentage probability for better viewing
 
-# from sklearn.model_selection import train_test_split   # To split the X and y data into training and testing sets
-# from sklearn.ensemble import RandomForestClassifier    # To use Random Forest Classifier as the prediction model
-
 import streamlit as st # To create streamlit formatting
 
 # Add title
@@ -128,24 +125,6 @@ def scale_dataframe():
 
 # Call function
 scale_dataframe()
-
-# # Split the dataset into features and target variable
-# X = heart.drop('HeartDisease', axis=1)
-# y = heart['HeartDisease']
-
-# # Split the dataset into training and testing sets
-# X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, random_state=2201984)
-
-# # Create model with best hyperparameters
-# model = RandomForestClassifier(max_depth = 5, criterion = 'gini', min_samples_split = 2, n_estimators = 300, max_features = 'sqrt', 
-#                                random_state = 2201984)
-
-# # Fit the model
-# model.fit(X_train, y_train)
-
-# # Make predictions on the input array
-# prediction = model.predict(df_scale)
-# prediction_proba = model.predict_proba(df_scale)
 
 # Make predictions on the input array
 prediction = RFC_model.predict(df_scale)

@@ -114,7 +114,7 @@ def scale_dataframe():
             df_scale.loc[0, 'ExerciseAngina'] = 0
             
     # Oldpeak is normalised by min-maxing values following the prepared dataset
-    df_scale['Oldpeak'] = (df_scale['Oldpeak'] - (-2.6)) / (6.2 - (-2.6))
+    df_scale['Oldpeak'] = (df_scale['Oldpeak'] - 0.887364) / 1.066570
     
     if df_scale.loc[0, 'ST_Slope'] == 'Downsloping':
             df_scale.loc[0, 'ST_Slope'] = 0

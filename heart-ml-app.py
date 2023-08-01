@@ -11,6 +11,14 @@ import numpy as np     # To round the percentage probability for better viewing
 
 import streamlit as st # To create streamlit formatting
 
+# Configure initial page
+st.set_page_config(
+        page_title="Heart Disease Prediction App",
+        page_icon="st_logo.png",
+        layout="wide",
+        initial_sidebar_state="expanded"
+    )
+
 # Add title
 st.write('''
 # Heart Disease Prediction App

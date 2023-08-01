@@ -138,7 +138,7 @@ prediction = RFC_model.predict(df_scale)
 prediction_proba = RFC_model.predict_proba(df_scale)
 
 # Tabs of different information
-tab1, tab2, tab3 = st.tabs(["Dictionary", "Parameters", "Prediction"])
+tab1, tab2, tab3 = st.tabs([":closed_book: Dictionary", ":pencil: Parameters", ":heart: Prediction"])
 
 # Tab of dataset and dictionary
 with tab1:

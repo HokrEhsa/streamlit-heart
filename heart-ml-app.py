@@ -121,6 +121,7 @@ def scale_dataframe():
     elif df_scale.loc[0, 'ExerciseAngina'] == 'No':
             df_scale.loc[0, 'ExerciseAngina'] = 0
             
+    # Oldpeak is normalised by min-maxing values following the prepared dataset
     df_scale['Oldpeak'] = (df_scale['Oldpeak'] - 0.887364) / 1.066570
     
     if df_scale.loc[0, 'ST_Slope'] == 'Downsloping':
@@ -147,136 +148,136 @@ with tab1:
     st.subheader("Original Dataset from Kaggle")
     st.write(heart_bfmodel)
     
-    st.subheader("Data Dictionary")
+    # Store dictionary information inside an expander to reduce space
+    with st.expander("Data Dictionary"):
+        st.write('''
+            **Age:** The age of the patient in years.
 
-    st.write('''
-    **Age:** The age of the patient in years.
+            **Sex:** Biological sex of the patient.
 
-    **Sex:** Biological sex of the patient.
+            - **M:** Male
 
-    - **M:** Male
+            - **F:** Female
 
-    - **F:** Female
+            **ChestPainType:** Type of chest pain experienced.
 
-    **ChestPainType:** Type of chest pain experienced.
+            - **TA:** Typical Angina
 
-    - **TA:** Typical Angina
+            - **ATA:** Atypical Angina
 
-    - **ATA:** Atypical Angina
+            - **NAP:** Non-Anginal Pain
 
-    - **NAP:** Non-Anginal Pain
+            - **ASY:** Asymptomatic
 
-    - **ASY:** Asymptomatic
+            **RestingBP:** Resting blood pressure in mm Hg.
 
-    **RestingBP:** Resting blood pressure in mm Hg.
+            **Cholesterol:** Serum/Total cholesterol level in mm/dl.
 
-    **Cholesterol:** Serum/Total cholesterol level in mm/dl.
+            **FastingBS:** Fasting blood sugar of patient.
 
-    **FastingBS:** Fasting blood sugar of patient.
+            - **1:** If FastingBS > 120 mg/dL
 
-    - **1:** If FastingBS > 120 mg/dL
+            - **0:** Otherwise
 
-    - **0:** Otherwise
+            **RestingECG:** Resting electrocardiogram results.
 
-    **RestingECG:** Resting electrocardiogram results.
+            - **Normal:** Normal
 
-    - **Normal:** Normal
+            - **ST:** Having ST-T Wave Abnormality (T wave inversions and/or ST elevation or depression of > 0.05 mV)
 
-    - **ST:** Having ST-T Wave Abnormality (T wave inversions and/or ST elevation or depression of > 0.05 mV)
+            - **LVH:** Showing probable or definite Left Ventricular Hypertrophy by Estes' criteria
 
-    - **LVH:** Showing probable or definite Left Ventricular Hypertrophy by Estes' criteria
+            **MaxHR:** Maximum heart rate achieved.
 
-    **MaxHR:** Maximum heart rate achieved.
+            **ExerciseAngina:** Presence of exercise-induced angina.
 
-    **ExerciseAngina:** Presence of exercise-induced angina.
+            - **Y:** Yes
 
-    - **Y:** Yes
+            - **N:** No
 
-    - **N:** No
+            **Oldpeak:** ST numeric value measured in depression.
 
-    **Oldpeak:** ST numeric value measured in depression.
+            **ST_Slope:** The slope of the peak exercise ST segment.
 
-    **ST_Slope:** The slope of the peak exercise ST segment.
+            - **Up:** Upsloping
 
-    - **Up:** Upsloping
+            - **Flat:** Flat
 
-    - **Flat:** Flat
+            - **Down:** Downsloping
 
-    - **Down:** Downsloping
+            **HeartDisease:** Output class of whether if patient has heart disease.
 
-    **HeartDisease:** Output class of whether if patient has heart disease.
+            - **1:** Heart Disease
 
-    - **1:** Heart Disease
-
-    - **0:** Normal
+            - **0:** Normal
         ''')
     
     # Dataset after data preparation and being used for modelling
     st.subheader("Dataset for Modelling after Data Preparation")
     st.write(heart)
     
-    st.subheader("Data Dictionary")
+    # Store dictionary information inside an expander to reduce space
+    with st.expander("Data Dictionary"):
+        st.write('''
+            **Age:** The age of the patient in years after stardardisation.
 
-    st.write('''
-    **Age:** The age of the patient in years after stardardisation.
+            **Sex:** Biological sex of the patient after label encoding.
 
-    **Sex:** Biological sex of the patient after label encoding.
+            - **0:** Female
 
-    - **0:** Female
+            - **1:** Male
 
-    - **1:** Male
+            **ChestPainType:** Type of chest pain experienced after label encoding.
 
-    **ChestPainType:** Type of chest pain experienced after label encoding.
-    
-    - **0:** Asymptomatic
+            - **0:** Asymptomatic
 
-    - **1:** Atypical Angina
+            - **1:** Atypical Angina
 
-    - **2:** Non-Anginal Pain
+            - **2:** Non-Anginal Pain
 
-    - **3:** Typical Angina
+            - **3:** Typical Angina
 
-    **RestingBP:** Resting blood pressure in mm Hg after stardardisation.
+            **RestingBP:** Resting blood pressure in mm Hg after stardardisation.
 
-    **Cholesterol:** Serum/Total cholesterol level in mm/dl after stardardisation.
+            **Cholesterol:** Serum/Total cholesterol level in mm/dl after stardardisation.
 
-    **FastingBS:** Fasting blood sugar of patient after label encoding.
+            **FastingBS:** Fasting blood sugar of patient after label encoding.
 
-    - **0:** Otherwise
+            - **0:** Otherwise
 
-    - **1:** If FastingBS > 120 mg/dL
+            - **1:** If FastingBS > 120 mg/dL
 
-    **RestingECG:** Resting electrocardiogram results after label encoding.
+            **RestingECG:** Resting electrocardiogram results after label encoding.
 
-    - **0:** Showing probable or definite Left Ventricular Hypertrophy by Estes' criteria
-    
-    - **1:** Normal
+            - **0:** Showing probable or definite Left Ventricular Hypertrophy by Estes' criteria
 
-    - **2:** Having ST-T Wave Abnormality (T wave inversions and/or ST elevation or depression of > 0.05 mV)    
+            - **1:** Normal
 
-    **MaxHR:** Maximum heart rate achieved after stardardisation.
+            - **2:** Having ST-T Wave Abnormality (T wave inversions and/or ST elevation or depression of > 0.05 mV)    
 
-    **ExerciseAngina:** Presence of exercise-induced angina after label encoding.
+            **MaxHR:** Maximum heart rate achieved after stardardisation.
 
-    - **0:** No
+            **ExerciseAngina:** Presence of exercise-induced angina after label encoding.
 
-    - **1:** Yes
+            - **0:** No
 
-    **Oldpeak:** ST numeric value measured in depression after normalisation.
+            - **1:** Yes
 
-    **ST_Slope:** The slope of the peak exercise ST segment after label encoding.
+            **Oldpeak:** ST numeric value measured in depression after normalisation.
 
-    - **0:** Downsloping
+            **ST_Slope:** The slope of the peak exercise ST segment after label encoding.
 
-    - **1:** Flat
+            - **0:** Downsloping
 
-    - **2:** Upsloping
+            - **1:** Flat
 
-    **HeartDisease:** Output class of whether if patient has heart disease after label encoding.
+            - **2:** Upsloping
 
-    - **0:** Normal
+            **HeartDisease:** Output class of whether if patient has heart disease after label encoding.
 
-    - **1:** Heart Disease
+            - **0:** Normal
+
+            - **1:** Heart Disease
         ''')
 
 # Tab with original inputs and encoded + scaled inputs
@@ -299,15 +300,15 @@ with tab3:
     st.subheader('Class Labels and their Corresponding Index Number')
     st.write(heart['HeartDisease'].unique())
     
-    st.write('''
-    **0:** This value means that the person does not have Coronary Heart Disease.
-    
+    # Error cell to display information (because it matches the theme of red)
+    st.error('''
+    **0:** This value means that the person does not have Coronary Heart Disease.\n
     **1:** This value means that the person does have Coronary Heart Disease or has signs of it.
     ''')
 
     # Predicted value of the inputs provided
     st.subheader('Predicted Value')
-    st.write('Prediction:', heart['HeartDisease'].unique()[prediction])
+    st.write(heart['HeartDisease'].unique()[prediction])
 
     if prediction == 0:
         st.write('''
